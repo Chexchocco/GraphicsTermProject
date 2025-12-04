@@ -34,6 +34,7 @@ public class CameraMove : MonoBehaviour
     void LateUpdate()
     {
         if (!pivot) return;
+        if (!GameManager.ScreenMove) return;
 
         if (Input.GetMouseButton(1)) // 우
         {

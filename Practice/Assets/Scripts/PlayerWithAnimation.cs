@@ -47,11 +47,13 @@ namespace PlayerWithAnimation
         {
             float dx = 0f, dz = 0f;
 
+            if (!GameManager.CatMove) return;
+
             if (Input.GetKey(KeyCode.W)) dz += 1f;
             if (Input.GetKey(KeyCode.S)) dz -= 1f;
             if (Input.GetKey(KeyCode.A)) dx -= 1f;
             if (Input.GetKey(KeyCode.D)) dx += 1f;
-
+            
             inputAxis = new Vector2(dx, dz);
         }
 

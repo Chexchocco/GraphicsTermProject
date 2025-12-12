@@ -89,6 +89,7 @@ namespace PlayerWithAnimation
             screenPos.x += inputAxis.x * screenMoveSpeed * dt;
             screenPos.y += inputAxis.y * screenMoveSpeed * dt;
 
+
             // 레이캐스트로 "현재 카메라에서 봤을 때 이어져 보이는 땅" 찾기
             if (Physics.Raycast(
                 cam.ScreenPointToRay(screenPos),

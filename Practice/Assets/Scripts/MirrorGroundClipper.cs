@@ -1,79 +1,124 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class MirrorGroundClipper : MonoBehaviour
 {
     [Header("Settings")]
-    public Camera mirrorCamera;   
-    public Transform mirrorPlane;  
-    public LayerMask groundLayer;   
-    public GameObject groundPrefab; 
-    public RenderTexture captureTexture; 
+    public Camera mirrorCamera;
+    public Transform mirrorPlane;
+    public LayerMask groundLayer;
+    public Material generatedMeshMaterial;
+    public RenderTexture captureTexture;
 
-    [Header("Scan Settings")]
-    [Range(10, 100)]
-    public int scanStep = 40;
+    [Header("Generation Settings")]
+    [Range(1, 20)]
+    public int resolutionStep = 1;
+    public float maxNeighborDist = 1.0f;
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.C))
         {
-            SpawnSingleReflectedGround();
+            GenerateReflectedGroundMesh();
         }
     }
 
-    void SpawnSingleReflectedGround()
+    void GenerateReflectedGroundMesh()
     {
         int width = captureTexture.width;
         int height = captureTexture.height;
 
-        RaycastHit bestHit = new RaycastHit();
-        bool found = false;
-        float minDistanceToCenter = float.MaxValue;
-        Vector2 screenCenter = new Vector2(width / 2f, height / 2f);
+        List<Vector3> vertices = new List<Vector3>();
+        List<int> triangles = new List<int>();
+        List<Vector2> uvs = new List<Vector2>();
 
-        // 거울에서 ray 쏴서 layer가 ground인 가장 가까운 오브젝트 찾음
-        for (int y = 0; y < height; y += scanStep)
+        int gridW = Mathf.CeilToInt((float)width / resolutionStep);
+        int gridH = Mathf.CeilToInt((float)height / resolutionStep);
+        int[,] vertexIndices = new int[gridH, gridW];
+
+        Vector3 planeNormal = mirrorPlane.forward;
+        Vector3 planePos = mirrorPlane.position;
+
+        // 버텍스 생성
+        for (int y = 0; y < gridH; y++)
         {
-            for (int x = 0; x < width; x += scanStep)
+            for (int x = 0; x < gridW; x++)
             {
-                Ray ray = mirrorCamera.ScreenPointToRay(new Vector3(x, y, 0));
+                int px = x * resolutionStep;
+                int py = y * resolutionStep;
 
-                if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
+                Ray ray = mirrorCamera.ScreenPointToRay(new Vector3(px, py, 0));
+
+                if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))//ray 쏴서 거울에 비친 픽셀을 저장
                 {
-                    float dist = Vector2.Distance(new Vector2(x, y), screenCenter);
-                    if (dist < minDistanceToCenter)
-                    {
-                        minDistanceToCenter = dist;
-                        bestHit = hit;
-                        found = true;
-                    }
+                    Vector3 reflectedPos = CalculateReflectedPoint(hit.point, planePos, planeNormal);
+                    vertexIndices[y, x] = vertices.Count;
+                    vertices.Add(reflectedPos);
+                    uvs.Add(new Vector2((float)px / width, (float)py / height));
+                }
+                else
+                {
+                    vertexIndices[y, x] = -1;
                 }
             }
         }
 
-        if (found)
+        // 삼각형 연결
+        for (int y = 0; y < gridH - 1; y++)
         {
-            CreateReflectedObject(bestHit);
+            for (int x = 0; x < gridW - 1; x++)
+            {
+                int i0 = vertexIndices[y, x];         // Bottom-Left
+                int i1 = vertexIndices[y, x + 1];     // Bottom-Right
+                int i2 = vertexIndices[y + 1, x];     // Top-Left
+                int i3 = vertexIndices[y + 1, x + 1]; // Top-Right
+
+                if (i0 == -1 || i1 == -1 || i2 == -1 || i3 == -1) continue;
+
+                if (Vector3.Distance(vertices[i0], vertices[i1]) > maxNeighborDist ||
+                    Vector3.Distance(vertices[i0], vertices[i2]) > maxNeighborDist ||
+                    Vector3.Distance(vertices[i1], vertices[i3]) > maxNeighborDist ||
+                    Vector3.Distance(vertices[i2], vertices[i3]) > maxNeighborDist) continue;
+
+                    triangles.Add(i0); triangles.Add(i1); triangles.Add(i2);
+                    triangles.Add(i2); triangles.Add(i1); triangles.Add(i3);
+            }
         }
+
+        CreateMeshObject(vertices, triangles, uvs);
     }
 
-    void CreateReflectedObject(RaycastHit hit)// 찾은 ground를 거울에 비친 각도, 위치에 생성
+    Vector3 CalculateReflectedPoint(Vector3 hitPoint, Vector3 planePos, Vector3 planeNormal)
     {
-
-        Vector3 N = mirrorPlane.forward;
-        Vector3 O = mirrorPlane.position;
-
-        Vector3 P = hit.point;
+        Vector3 P = hitPoint;
+        Vector3 O = planePos;
+        Vector3 N = planeNormal;
         float distToPlane = Vector3.Dot(P - O, N);
-        Vector3 reflectedPos = P - 2 * distToPlane * N;
+        return P - 2 * distToPlane * N;
+    }
 
-        Vector3 realForward = hit.transform.forward;
-        Vector3 realUp = hit.transform.up;
+    void CreateMeshObject(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)//삼각형으로 mesh 생성
+    {
+        if (vertices.Count == 0) return;
 
-        Vector3 reflectedForward = Vector3.Reflect(realForward, N);
-        Vector3 reflectedUp = Vector3.Reflect(realUp, N);
+        GameObject meshObj = new GameObject("ReflectedGroundMesh");
+        MeshFilter mf = meshObj.AddComponent<MeshFilter>();
+        MeshRenderer mr = meshObj.AddComponent<MeshRenderer>();
+        MeshCollider mc = meshObj.AddComponent<MeshCollider>();
 
-        Quaternion reflectedRot = Quaternion.LookRotation(reflectedForward, reflectedUp);
-        Instantiate(groundPrefab, reflectedPos, reflectedRot);
+        Mesh mesh = new Mesh();
+        mesh.indexFormat = UnityEngine.Rendering.IndexFormat.UInt32;
+        mesh.vertices = vertices.ToArray();
+        mesh.triangles = triangles.ToArray();
+        mesh.uv = uvs.ToArray();
+
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+
+        mf.mesh = mesh;
+        mr.material = generatedMeshMaterial;
+
+        mc.sharedMesh = mesh;
+        meshObj.layer = LayerMask.NameToLayer("Ground"); 
     }
 }

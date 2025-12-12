@@ -7,7 +7,7 @@ public class MainMenuUI : MonoBehaviour
 
     public void OnStartGame()
     {
-        SceneManager.LoadScene("Demo_cat"); 
+        SceneManager.LoadScene("StageSelect"); 
     }
 
     public void OnHowToPlay()

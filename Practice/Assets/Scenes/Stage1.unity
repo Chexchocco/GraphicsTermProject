@@ -627,6 +627,7 @@ MonoBehaviour:
   rotateSpeed: 5
   panSpeed: 0.5
   zoomSpeed: 5
+  onMove: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -2023,6 +2024,7 @@ MonoBehaviour:
     m_Bits: 136
   verticalID: Vert
   stateID: State
+  cm: {fileID: 330585548}
 --- !u!54 &2084795582
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -82,6 +82,7 @@ public class MirrorGroundClipper : MonoBehaviour
 
                     triangles.Add(i0); triangles.Add(i1); triangles.Add(i2);
                     triangles.Add(i2); triangles.Add(i1); triangles.Add(i3);
+
             }
         }
 
@@ -114,6 +115,7 @@ public class MirrorGroundClipper : MonoBehaviour
 
         mesh.RecalculateNormals();
         mesh.RecalculateBounds();
+        mesh.RecalculateTangents();
 
         mf.mesh = mesh;
         mr.material = generatedMeshMaterial;

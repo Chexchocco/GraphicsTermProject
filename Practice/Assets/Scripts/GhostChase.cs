@@ -20,7 +20,7 @@ public class GhostChase : MonoBehaviour
         if (target == null) return;
 
         Vector3 to = target.position - transform.position;
-        to.y = 0f;
+        //to.y = 0f;
         if (to.sqrMagnitude < 0.0001f) return;
 
         // 회전

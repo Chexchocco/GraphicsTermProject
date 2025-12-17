@@ -624,6 +624,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraMove
   pivot: {fileID: 1444630299}
+  cat: {fileID: 2084795583}
+  followSpeed: 8
+  followOffset: {x: 0, y: 0, z: 0}
   rotateSpeed: 5
   panSpeed: 0.5
   zoomSpeed: 5

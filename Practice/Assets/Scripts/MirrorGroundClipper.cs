@@ -39,7 +39,6 @@ public class MirrorGroundClipper : MonoBehaviour
         Vector3 planeNormal = mirrorPlane.forward;
         Vector3 planePos = mirrorPlane.position;
 
-        // 버텍스 생성
         for (int y = 0; y < gridH; y++)
         {
             for (int x = 0; x < gridW; x++)
@@ -49,7 +48,7 @@ public class MirrorGroundClipper : MonoBehaviour
 
                 Ray ray = mirrorCamera.ScreenPointToRay(new Vector3(px, py, 0));
 
-                if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))//ray 쏴서 거울에 비친 픽셀을 저장
+                if (Physics.Raycast(ray, out RaycastHit hit, 1000f, groundLayer))
                 {
                     Vector3 reflectedPos = CalculateReflectedPoint(hit.point, planePos, planeNormal);
                     vertexIndices[y, x] = vertices.Count;
@@ -63,7 +62,6 @@ public class MirrorGroundClipper : MonoBehaviour
             }
         }
 
-        // 삼각형 연결
         for (int y = 0; y < gridH - 1; y++)
         {
             for (int x = 0; x < gridW - 1; x++)
@@ -98,7 +96,7 @@ public class MirrorGroundClipper : MonoBehaviour
         return P - 2 * distToPlane * N;
     }
 
-    void CreateMeshObject(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)//삼각형으로 mesh 생성
+    void CreateMeshObject(List<Vector3> vertices, List<int> triangles, List<Vector2> uvs)
     {
         if (vertices.Count == 0) return;
 

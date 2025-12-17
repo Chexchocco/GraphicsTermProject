@@ -9,7 +9,7 @@ public class Mirror : MonoBehaviour
     [Header("Mirror Settings")]
     public float MirrorSize;
     public float MirrorSpeed;
-    public float MouseSpeed = 100.0f;
+    public float MouseSpeed = 300.0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

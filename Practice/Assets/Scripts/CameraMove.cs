@@ -5,6 +5,10 @@ using static UnityEngine.GraphicsBuffer;
 public class CameraMove : MonoBehaviour
 {
     [SerializeField] private GameObject pivot; //기준점 같은거, 플레이어 위치에 따라 움직이게 수정해줘야 버그 생길 여지가 적을듯
+    [SerializeField] private Transform cat;
+    [SerializeField] private float followSpeed = 8f;
+    [SerializeField] private Vector3 followOffset = Vector3.zero;
+
 
     public float rotateSpeed = 5.0f;
     public float panSpeed = 0.5f;
@@ -42,6 +46,12 @@ public class CameraMove : MonoBehaviour
             pitch -= Input.GetAxis("Mouse Y") * rotateSpeed;
 
             pitch = Mathf.Clamp(pitch, 40f, 80f); // 땅 밑으로 안 가게 제한 + 너무 가파르게 보면 속도가 어쩔 수 없이 너무 빠른거 떔에 수정함
+        }
+
+        //pivot이 cat에 따라 움직임
+        if(cat!=null){
+            Vector3 goal = cat.position + followOffset;
+            pivot.transform.position = Vector3.Lerp(pivot.transform.position, goal, followSpeed * Time.deltaTime);
         }
 
         if (Input.GetMouseButton(0)) // 좌

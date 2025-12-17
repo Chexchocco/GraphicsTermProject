@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace PlayerWithAnimation
@@ -11,7 +12,7 @@ namespace PlayerWithAnimation
         public float screenMoveSpeed = 150f;  
         public float rayDistance = 100f;
         public LayerMask groundLayer;
-
+        private Collider col;
         [Header("Animation")]
         public string verticalID = "Vert";
         public string stateID = "State";
@@ -21,13 +22,16 @@ namespace PlayerWithAnimation
         private Camera cam;
         private float halfHeight;
 
+        [SerializeField] CameraMove cm;
+
+
         // 입력 저장용
         private Vector2 inputAxis = Vector2.zero;
 
         // 애니메이션용
         private float animValue = 0f;
         private float animFlow = 6f; 
-
+       
         float footOffset;
 
         void Start()
@@ -36,7 +40,7 @@ namespace PlayerWithAnimation
             animator = GetComponent<Animator>();
             cam = Camera.main;
 
-            var col = GetComponent<Collider>();
+            col = GetComponent<Collider>();
             //halfHeight = col.bounds.extents.y;
             footOffset = transform.position.y - col.bounds.min.y;
 
@@ -73,9 +77,10 @@ namespace PlayerWithAnimation
             {
                 // 입력 없으면 애니메이션만 멈추게
                 SetAnimMoving(false);
+                cm.onMove = false;
                 return;
             }
-
+            cm.onMove = true;
             // 스크린 좌표 계산 (발밑 근처 기준)
             Vector3 screenPos = cam.WorldToScreenPoint(
                 new Vector3(
@@ -90,16 +95,37 @@ namespace PlayerWithAnimation
             screenPos.y += inputAxis.y * screenMoveSpeed * dt;
 
 
+            Vector3 camFwd = cam.transform.forward;
+            Vector3 camRight = cam.transform.right;
+            camFwd.y = 0; camRight.y = 0;
+            camFwd.Normalize(); camRight.Normalize();
+
+            Vector3 moveDir = (camFwd * inputAxis.y + camRight * inputAxis.x).normalized;
+            RaycastHit hit;
+            // Collider currentGround = CurrentGround();
+
+
             // 레이캐스트로 "현재 카메라에서 봤을 때 이어져 보이는 땅" 찾기
             if (Physics.Raycast(
                 cam.ScreenPointToRay(screenPos),
-                out RaycastHit hit,
+                out hit,
                 rayDistance,
                 groundLayer))
             {
-                // 타겟 위치
+                if (Vector3.Dot(hit.normal, Vector3.up) < 0.7f)
+                {
+                    SetAnimMoving(false);
+                    Debug.Log("Side detection");
+                    return; // 옆면(벽)이나 천장이므로 이동 불가
+                }
                 Vector3 targetPos = hit.point + Vector3.up * footOffset;
+                if(Mathf.Abs(transform.position.y - hit.point.y) <= 0.04f)
+                {
+                    MoveToTarget(targetPos);
+                }
                 rb.MovePosition(targetPos);
+
+
 
                 // 이동 방향 기준으로 회전
                 Vector3 flatDir = targetPos - transform.position;
@@ -109,14 +135,59 @@ namespace PlayerWithAnimation
                     Quaternion targetRot = Quaternion.LookRotation(flatDir.normalized, Vector3.up);
                     transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, 0.2f);
                 }
-
                 SetAnimMoving(true);
+
+
+                
             }
             else
             {
                 SetAnimMoving(false);
             }
         }
+
+
+        private Collider CurrentGround()
+        {
+            float checkRadius = footOffset;
+            Vector3 origin = transform.position + Vector3.up * 1.0f;
+
+            float maxDist = 1.0f - checkRadius + 0.2f;
+
+            if (Physics.SphereCast(origin, checkRadius, Vector3.down, out RaycastHit hit, maxDist, groundLayer))
+            {
+                if (Vector3.Dot(hit.normal, Vector3.up) > 0.5f)
+                {
+                    return hit.collider;
+                }
+            }
+
+            return null;
+        }
+        private void MoveToTarget(Vector3 targetPos)
+        {
+            Vector3 currentPos = rb.position;
+            Vector3 moveDelta = targetPos - currentPos;
+
+
+            float maxDist = 3.0f * Time.fixedDeltaTime;
+
+            moveDelta = moveDelta.normalized * maxDist;
+            Vector3 rayOrigin = currentPos;
+            Vector3 rayDir = moveDelta.normalized;
+
+            if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, moveDelta.magnitude, ~groundLayer))
+            {
+                float safeDist = Mathf.Max(0, hit.distance - 0.1f);
+
+                moveDelta = rayDir * safeDist;
+            }
+
+
+            rb.MovePosition(currentPos + moveDelta);
+            
+        }
+
 
         private void SetAnimMoving(bool isMoving)
         {

@@ -9,7 +9,7 @@ public class CameraMove : MonoBehaviour
     public float rotateSpeed = 5.0f;
     public float panSpeed = 0.5f;
     public float zoomSpeed = 5.0f;
-
+    public bool onMove = false;
     private float yaw = 0.0f;   // 좌우 회전 (Y축)
     private float pitch = 0.0f; // 상하 회전 (X축)
     private float distance = 10.0f;
@@ -35,13 +35,13 @@ public class CameraMove : MonoBehaviour
     {
         if (!pivot) return;
         if (!GameManager.ScreenMove) return;
-
+        if (onMove) return;
         if (Input.GetMouseButton(1)) // 우
         {
             yaw += Input.GetAxis("Mouse X") * rotateSpeed;
             pitch -= Input.GetAxis("Mouse Y") * rotateSpeed;
 
-            pitch = Mathf.Clamp(pitch, 20f, 80f); // 땅 밑으로 안 가게 제한
+            pitch = Mathf.Clamp(pitch, 40f, 80f); // 땅 밑으로 안 가게 제한 + 너무 가파르게 보면 속도가 어쩔 수 없이 너무 빠른거 떔에 수정함
         }
 
         if (Input.GetMouseButton(0)) // 좌

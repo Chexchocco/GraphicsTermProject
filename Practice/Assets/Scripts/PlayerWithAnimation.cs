@@ -119,13 +119,18 @@ namespace PlayerWithAnimation
                     return; // 옆면(벽)이나 천장이므로 이동 불가
                 }
                 Vector3 targetPos = hit.point + Vector3.up * footOffset;
-                if(Mathf.Abs(transform.position.y - hit.point.y) <= 0.04f)
-                {
+                if (Mathf.Abs(transform.position.y - targetPos.y) <= 1.0f)
+                {//같은 지면 일때를 대충 구현
+                    //Debug.Log("same");
                     MoveToTarget(targetPos);
                 }
-                rb.MovePosition(targetPos);
+                else
+                {
+                    Debug.Log("telpo");
+                    rb.MovePosition(targetPos);
 
 
+                }
 
                 // 이동 방향 기준으로 회전
                 Vector3 flatDir = targetPos - transform.position;
@@ -137,8 +142,6 @@ namespace PlayerWithAnimation
                 }
                 SetAnimMoving(true);
 
-
-                
             }
             else
             {
@@ -168,24 +171,26 @@ namespace PlayerWithAnimation
         {
             Vector3 currentPos = rb.position;
             Vector3 moveDelta = targetPos - currentPos;
-
-
-            float maxDist = 3.0f * Time.fixedDeltaTime;
-
-            moveDelta = moveDelta.normalized * maxDist;
-            Vector3 rayOrigin = currentPos;
-            Vector3 rayDir = moveDelta.normalized;
-
-            if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, moveDelta.magnitude, ~groundLayer))
+            
+            moveDelta.y = 0.0f;
+            Vector3 moveDir = moveDelta.normalized;
+            float originMag = moveDelta.magnitude;
+            /*if (rb.SweepTest(moveDir, out RaycastHit hit, moveDelta.magnitude + 0.2f))
             {
-                float safeDist = Mathf.Max(0, hit.distance - 0.1f);
+                Debug.Log("222");
+                float safeDist = Mathf.Max(0, hit.distance-0.3f);
+                moveDelta = moveDir * safeDist;
+            }*/
+            if(Physics.Raycast(currentPos, moveDir, out RaycastHit hit, originMag +0.4f))
+            {
+                Debug.Log("222");
 
-                moveDelta = rayDir * safeDist;
+                float safeDist = Mathf.Max(0, hit.distance - 0.9f);
+                moveDelta = moveDir * safeDist;
             }
 
 
             rb.MovePosition(currentPos + moveDelta);
-            
         }
 
 

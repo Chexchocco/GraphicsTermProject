@@ -270,6 +270,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraMove
   pivot: {fileID: 1444630299}
+  cat: {fileID: 0}
+  followSpeed: 8
+  followOffset: {x: 0, y: 0, z: 0}
   rotateSpeed: 5
   panSpeed: 0.5
   zoomSpeed: 5
@@ -359,13 +362,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 334804525}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: -0.23827916, z: 0, w: 0.9711968}
-  m_LocalPosition: {x: 8.32, y: 0.56, z: -0.4}
+  m_LocalRotation: {x: 0, y: -0.008726465, z: 0, w: 0.999962}
+  m_LocalPosition: {x: -12.7, y: 0.56, z: -0.4}
   m_LocalScale: {x: 1.26, y: 6.48, z: 16.69}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: -27.57, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -1, z: 0}
 --- !u!54 &334804530
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1291,7 +1294,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 31d2c91682ac6f045b4b75ebf27e5d77, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.46
+      value: -2.78
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 31d2c91682ac6f045b4b75ebf27e5d77, type: 3}
       propertyPath: m_LocalRotation.w
@@ -1857,8 +1860,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.32244718, y: 0.3, z: 0.56005675}
-  m_Center: {x: 0.016495762, y: 0.16, z: -0.0057974434}
+  m_Size: {x: 0.32244718, y: 0, z: 0.56005675}
+  m_Center: {x: 0.016495762, y: 0, z: -0.0057974434}
 --- !u!23 &2084795577
 MeshRenderer:
   m_ObjectHideFlags: 0

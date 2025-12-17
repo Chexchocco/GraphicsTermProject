@@ -46,8 +46,7 @@ public class ShadowColllider : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-
+        
 
 
     }

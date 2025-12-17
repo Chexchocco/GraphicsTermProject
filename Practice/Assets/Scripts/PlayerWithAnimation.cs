@@ -9,7 +9,7 @@ namespace PlayerWithAnimation
     public class PlayerMover_PlayerWithAnimation : MonoBehaviour
     {
         [Header("Movement")]
-        public float screenMoveSpeed = 150f;  
+        public float screenMoveSpeed;  
         public float rayDistance = 100f;
         public LayerMask groundLayer;
         private Collider col;
@@ -77,15 +77,15 @@ namespace PlayerWithAnimation
             {
                 // 입력 없으면 애니메이션만 멈추게
                 SetAnimMoving(false);
-                cm.onMove = false;
+                //cm.onMove = false;
                 return;
             }
-            cm.onMove = true;
+            //cm.onMove = true;
             // 스크린 좌표 계산 (발밑 근처 기준)
             Vector3 screenPos = cam.WorldToScreenPoint(
                 new Vector3(
                     transform.position.x,
-                    transform.position.y - footOffset + 0.01f,
+                    transform.position.y,
                     transform.position.z
                 )
             );
@@ -102,7 +102,7 @@ namespace PlayerWithAnimation
 
             Vector3 moveDir = (camFwd * inputAxis.y + camRight * inputAxis.x).normalized;
             RaycastHit hit;
-            // Collider currentGround = CurrentGround();
+            Collider currentGround = CurrentGround();
 
 
             // 레이캐스트로 "현재 카메라에서 봤을 때 이어져 보이는 땅" 찾기
@@ -118,16 +118,18 @@ namespace PlayerWithAnimation
                     Debug.Log("Side detection");
                     return; // 옆면(벽)이나 천장이므로 이동 불가
                 }
-                Vector3 targetPos = hit.point + Vector3.up * footOffset;
-                if (col == hit.collider)
+                Vector3 targetPos = hit.point;
+                if (currentGround == hit.collider)
                 {//같은 지면 일때를 대충 구현
-                    //Debug.Log("same");
-                    MoveToTarget(targetPos);
+                    Debug.Log("same");
+                    //MoveToTarget(targetPos);
+                    rb.MovePosition(targetPos);
                 }
                 else
                 {
                     Debug.Log("telpo");
                     rb.MovePosition(targetPos);
+
 
 
                 }
@@ -174,21 +176,13 @@ namespace PlayerWithAnimation
             
             moveDelta.y = 0.0f;
             Vector3 moveDir = moveDelta.normalized;
-            float originMag = moveDelta.magnitude;
-            /*if (rb.SweepTest(moveDir, out RaycastHit hit, moveDelta.magnitude + 0.2f))
-            {
-                Debug.Log("222");
-                float safeDist = Mathf.Max(0, hit.distance-0.3f);
-                moveDelta = moveDir * safeDist;
-            }*/
-            if(Physics.Raycast(currentPos, moveDir, out RaycastHit hit, originMag +0.4f))
-            {
-                Debug.Log("222");
 
-                float safeDist = Mathf.Max(0, hit.distance - 0.9f);
+            if (rb.SweepTest(moveDir, out RaycastHit hit, moveDelta.magnitude + 0.1f))
+            {
+                Debug.Log("222");
+                float safeDist = Mathf.Max(0, moveDelta.magnitude-0.05f);
                 moveDelta = moveDir * safeDist;
             }
-
 
             rb.MovePosition(currentPos + moveDelta);
         }

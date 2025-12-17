@@ -8,8 +8,8 @@ public class AntiAliasingGround : MonoBehaviour
     public RawImage displayImage;
 
     [Header("Resolution Settings")]
-    public int pixelResWidth = 72;  // 해제 시 해상도
-    public int fullResWidth = 1920;  // 작동 시 해상도
+    public int pixelResWidth = 72;
+    public int fullResWidth = 1920;
 
     private bool isHighRes = false;
 
@@ -31,13 +31,13 @@ public class AntiAliasingGround : MonoBehaviour
     {
         gameViewRT.Release();
 
-        if (highQuality)// 안티앨리어싱
+        if (highQuality)
         {
             gameViewRT.width = fullResWidth;
             gameViewRT.height = Mathf.RoundToInt(fullResWidth * 9f / 16f);
             gameViewRT.filterMode = FilterMode.Bilinear;
         }
-        else// 해제 시 길이 해상도 낮아지고, 보간 해제해서 길 연결되게 할 수 있음.
+        else
         {
             gameViewRT.width = pixelResWidth;
             gameViewRT.height = Mathf.RoundToInt(pixelResWidth * 9f / 16f);

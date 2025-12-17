@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SimpleSlicer : MonoBehaviour
+public class ClippingObject : MonoBehaviour
 {
     public Camera cam;
 

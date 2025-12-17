@@ -9,7 +9,7 @@ public class Mirror : MonoBehaviour
     [Header("Mirror Settings")]
     public float MirrorSize;
     public float MirrorSpeed;
-    public float MouseSpeed = 300.0f;
+    public float MouseSpeed = 500.0f;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -75,6 +75,15 @@ public class Mirror : MonoBehaviour
             if (Input.GetKey(KeyCode.D)) moveDir += camRight;
 
             transform.position += moveDir * MirrorSpeed * Time.deltaTime;
+
+            float vertical = 0f;
+            if (Input.GetKey(KeyCode.UpArrow)) vertical += 1f;
+            if (Input.GetKey(KeyCode.DownArrow)) vertical -= 1f;
+
+            if (vertical != 0f)
+            {
+                transform.position += Vector3.up * vertical * MirrorSpeed * Time.deltaTime;
+            }
 
             //if (Input.GetKey(KeyCode.W))
             //{

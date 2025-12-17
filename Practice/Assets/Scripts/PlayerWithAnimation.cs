@@ -119,7 +119,7 @@ namespace PlayerWithAnimation
                     return; // 옆면(벽)이나 천장이므로 이동 불가
                 }
                 Vector3 targetPos = hit.point + Vector3.up * footOffset;
-                if (Mathf.Abs(transform.position.y - targetPos.y) <= 1.0f)
+                if (col == hit.collider)
                 {//같은 지면 일때를 대충 구현
                     //Debug.Log("same");
                     MoveToTarget(targetPos);

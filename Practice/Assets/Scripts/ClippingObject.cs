@@ -29,7 +29,7 @@ public class ClippingObject : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.C))
+        if (Input.GetKeyDown(KeyCode.V))
         {//Ordering: [0] = Left, [1] = Right, [2] = Down, [3] = Up, [4] = Near, [5] = Far
             for (int i = 0; i < 4; ++i)
             {

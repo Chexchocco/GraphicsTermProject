@@ -45,7 +45,7 @@ public class CameraMove : MonoBehaviour
             yaw += Input.GetAxis("Mouse X") * rotateSpeed;
             pitch -= Input.GetAxis("Mouse Y") * rotateSpeed;
 
-            pitch = Mathf.Clamp(pitch, 40f, 80f); // 땅 밑으로 안 가게 제한 + 너무 가파르게 보면 속도가 어쩔 수 없이 너무 빠른거 떔에 수정함
+            pitch = Mathf.Clamp(pitch, 20f, 80f); // 땅 밑으로 안 가게 제한 + 너무 가파르게 보면 속도가 어쩔 수 없이 너무 빠른거 떔에 수정함
         }
 
         //pivot이 cat에 따라 움직임

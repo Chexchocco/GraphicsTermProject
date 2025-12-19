@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: 55e64e617a8bfff4ba846574e2651eb9, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -621,7 +621,7 @@ Camera:
     serializedVersion: 2
     m_Bits: 4294967295
   m_RenderingPath: -1
-  m_TargetTexture: {fileID: 8400000, guid: a5c9adc82a8a7a145a7a2cd70b85386f, type: 2}
+  m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
   m_TargetEye: 3
   m_HDR: 1
@@ -873,7 +873,7 @@ MonoBehaviour:
   introFadeSeconds: 2
   stageSelectSceneName: StageSelect
   disableScripts:
-  - {fileID: 0}
+  - {fileID: 2084795588}
   - {fileID: 1292702670}
 --- !u!4 &482545670
 Transform:
@@ -1782,6 +1782,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: CAT
       objectReference: {fileID: 0}
+    - target: {fileID: 4149007760105985527, guid: 888966940c391a349b22dcc86c8821b4, type: 3}
+      propertyPath: flow
+      value: 
+      objectReference: {fileID: 482545669}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -2183,6 +2187,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 792972038521158944, guid: 888966940c391a349b22dcc86c8821b4, type: 3}
   m_PrefabInstance: {fileID: 1111612740}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &2084795588 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6034583324523784415, guid: 888966940c391a349b22dcc86c8821b4, type: 3}
+  m_PrefabInstance: {fileID: 1111612740}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e562b2e9ed3ea04cab824e32c4231f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerWithAnimation.PlayerMover_PlayerWithAnimation
 --- !u!1 &2112112363
 GameObject:
   m_ObjectHideFlags: 0
